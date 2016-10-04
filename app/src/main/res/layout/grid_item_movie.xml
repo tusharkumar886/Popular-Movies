@@ -6,15 +6,15 @@
     android:weightSum="1">
 
     <ImageView
-        android:id="@+id/movieImage"
-        android:layout_width="190dp"
-        android:layout_height="250dp"
+        android:id="@+id/movie_image"
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
         android:layout_gravity="center"
         android:scaleType="centerCrop" />
     <TextView
         android:id="@+id/movieName"
-        android:layout_gravity="center"
-        android:paddingBottom="8dp"
+        android:layout_gravity="center_vertical"
+        android:paddingLeft="16dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 </LinearLayout>

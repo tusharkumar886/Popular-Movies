@@ -18,21 +18,20 @@ import java.util.List;
  */
 
 public class MyGridAdapter extends ArrayAdapter<Movie> {
-    MyGridAdapter(FragmentActivity context, List<Movie> resource){
+
+    public MyGridAdapter(FragmentActivity context, List<Movie> resource){
         super(context, 0, resource);
     }
 
     @NonNull
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-        View itemView = convertView;
-        if(itemView==null){
-            itemView = LayoutInflater.from(getContext()).inflate(R.layout.grid_item_movie,parent,false);
-        }
+
+        View itemView = LayoutInflater.from(getContext()).inflate(R.layout.grid_item_movie,parent,false);
 
         Movie currentMovie = getItem(position);
 
-        ImageView imageView = (ImageView)itemView.findViewById(R.id.movieImage);
+        ImageView imageView = (ImageView)itemView.findViewById(R.id.movie_image);
         Picasso.with(getContext()).load(currentMovie.movieImage).into(imageView);
 
         TextView textView = (TextView)itemView.findViewById(R.id.movieName);
