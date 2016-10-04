@@ -5,11 +5,11 @@ package in.zattack.popularmovies;
  */
 
 public class Movie {
-    int movieImage;
+    String movieImage;
 
     String movieName;
 
-    public Movie(int image,String name){
+    public Movie(String image,String name){
         this.movieImage = image;
         this.movieName = name;
     }

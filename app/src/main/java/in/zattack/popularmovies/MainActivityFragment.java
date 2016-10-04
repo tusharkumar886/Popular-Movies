@@ -1,9 +1,7 @@
 package in.zattack.popularmovies;
 
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,13 +12,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Arrays;
+import java.util.ArrayList;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -33,7 +35,7 @@ public class MainActivityFragment extends Fragment {
 
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
@@ -41,13 +43,16 @@ public class MainActivityFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.mainactivityfragment, menu);
-        super.onCreateOptionsMenu(menu, inflater);
+        //super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if(id ==R.id.action_refresh){
+        if(id == R.id.refresh){
+            Log.i("Refresh Pressed","refresh");
+            MovieDetails weather = new MovieDetails();
+            weather.execute();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -56,44 +61,73 @@ public class MainActivityFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        Movie[] movieList = {new Movie(R.drawable.island, "Island"),
-                new Movie(R.drawable.jeep, "Jeep"),
-                new Movie(R.drawable.wave, "Wave"),
-                new Movie(R.drawable.wolf, "Wolf")};
-        adapter = new MyGridAdapter(getActivity(), Arrays.asList(movieList));
+        //Movie[] movieList = {};
+        adapter = new MyGridAdapter(getActivity(), new ArrayList<Movie>());
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         GridView gridview = (GridView) rootView.findViewById(R.id.gridView);
         gridview.setAdapter(adapter);
         return rootView;
     }
 
+    private Movie[] getmovieDataFromJson(String movieInfo) throws JSONException {
 
+        final String MDB_RESULT = "results";
+        final String MDB_TITLE = "title";
+        final String MDB_POSTER = "poster_path";
+
+        JSONObject moviejson = new JSONObject(movieInfo);
+        JSONArray movieArray = moviejson.getJSONArray(MDB_RESULT);
+        Log.e(LOG_TAG, String.valueOf(movieArray));
+
+        String baseURL = "http://image.tmdb.org/t/p/w185";
+        Movie[] movieDetails = new Movie[4];
+
+        for (int i = 0; i < 4; i++) {
+            JSONObject currentMovie = movieArray.getJSONObject(i);
+            Log.e(LOG_TAG, String.valueOf(currentMovie));
+            String movietitle = currentMovie.getString(MDB_TITLE);
+            String movieImageURL = currentMovie.getString(MDB_POSTER);
+            String moviePosterURL = baseURL + movieImageURL;
+            Log.e(LOG_TAG,moviePosterURL);
+            movieDetails[i] = new Movie(movieImageURL, movietitle);
+        }
+        return movieDetails;
+    }
+
+    private final String LOG_TAG = MainActivityFragment.class.getSimpleName();
 
     public class MovieDetails extends AsyncTask<Void,Void,Movie[]>{
 
         private final String LOG_TAG = MovieDetails.class.getSimpleName();
 
         @Override
+        protected void onPostExecute(Movie[] result) {
+            if (result != null) {
+                adapter.clear();
+                for (Movie oneMovie : result) {
+                    adapter.add(oneMovie);
+                }
+            }
+        }
+
+
+        @Override
         protected Movie[] doInBackground(Void... params) {
 
-            if (params.length == 0) {
-                return null;
-            }
 
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
             String movieinfoJsonstr = null;
             try {
 
+                //final String MOVIE_BASE_URL = "http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc";
+                //final String APPID_PARAM = "APPID_PARAM";
 
-                final String MOVIE_BASE_URL = "http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc";
-                final String APPID_PARAM = "APPID_PARAM";
-
-                //URL url = new URL("http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc");
-                Uri builtUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
-                        .appendQueryParameter(APPID_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY)
-                        .build();
-                URL url = new URL(builtUri.toString());
+                URL url = new URL("http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=19ac34309bee9f4bd7f268c4b424ee0a");
+                //Uri builtUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
+                //       .appendQueryParameter(APPID_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY)
+                //       .build();
+                //URL url = new URL(builtUri.toString());
 
                 String movieDbUrl = url.toString();
                 Log.v(LOG_TAG, movieDbUrl);
@@ -108,7 +142,7 @@ public class MainActivityFragment extends Fragment {
                 StringBuilder buffer = new StringBuilder();
                 if (inputStream == null) {
                     // Nothing to do.
-                    movieinfoJsonstr = null;
+                    return null;
                 }
                 reader = new BufferedReader(new InputStreamReader(inputStream));
 
@@ -121,15 +155,16 @@ public class MainActivityFragment extends Fragment {
                 }
                 if (buffer.length() == 0) {
                     // Stream was empty.  No point in parsing.
-                    movieinfoJsonstr = null;
+                    return null;
                 }
                 movieinfoJsonstr = buffer.toString();
-
+                Log.v(LOG_TAG, movieinfoJsonstr);
             } catch (IOException e) {
                 Log.e("PlaceholderFragment", "Error ", e);
                 // If the code didn't successfully get the weather data, there's no point in attemping
                 // to parse it.
                 movieinfoJsonstr = null;
+                Log.v(LOG_TAG, movieinfoJsonstr);
             }finally {
                 if (urlConnection != null) {
                     urlConnection.disconnect();
@@ -142,7 +177,14 @@ public class MainActivityFragment extends Fragment {
                     }
                 }
             }
+            try {
+                return getmovieDataFromJson(movieinfoJsonstr);
+            } catch (JSONException e) {
+                Log.e(LOG_TAG,"Error",e);
+            }
             return null;
         }
+
+
     }
 }
