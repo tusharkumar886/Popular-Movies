@@ -9,6 +9,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 /**
@@ -31,8 +33,7 @@ public class MyGridAdapter extends ArrayAdapter<Movie> {
         Movie currentMovie = getItem(position);
 
         ImageView imageView = (ImageView)itemView.findViewById(R.id.movieImage);
-        assert currentMovie != null;
-        imageView.setImageResource(currentMovie.movieImage);
+        Picasso.with(getContext()).load(currentMovie.movieImage).into(imageView);
 
         TextView textView = (TextView)itemView.findViewById(R.id.movieName);
         textView.setText(currentMovie.movieName);
