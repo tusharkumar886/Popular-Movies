@@ -50,7 +50,7 @@ public class MainActivityFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if(id == R.id.refresh){
-            Log.i("Refresh Pressed","refresh");
+
             MovieDetails weather = new MovieDetails();
             weather.execute();
             return true;
@@ -61,7 +61,7 @@ public class MainActivityFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        //Movie[] movieList = {};
+
         adapter = new MyGridAdapter(getActivity(), new ArrayList<Movie>());
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         GridView gridview = (GridView) rootView.findViewById(R.id.gridView);
@@ -77,24 +77,21 @@ public class MainActivityFragment extends Fragment {
 
         JSONObject moviejson = new JSONObject(movieInfo);
         JSONArray movieArray = moviejson.getJSONArray(MDB_RESULT);
-        Log.e(LOG_TAG, String.valueOf(movieArray));
 
-        String baseURL = "http://image.tmdb.org/t/p/w185";
-        Movie[] movieDetails = new Movie[4];
+        Movie[] movieDetails = new Movie[16];
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 16; i++) {
             JSONObject currentMovie = movieArray.getJSONObject(i);
-            Log.e(LOG_TAG, String.valueOf(currentMovie));
+
             String movietitle = currentMovie.getString(MDB_TITLE);
             String movieImageURL = currentMovie.getString(MDB_POSTER);
-            String moviePosterURL = baseURL + movieImageURL;
-            Log.e(LOG_TAG,moviePosterURL);
+
             movieDetails[i] = new Movie(movieImageURL, movietitle);
         }
         return movieDetails;
     }
 
-    private final String LOG_TAG = MainActivityFragment.class.getSimpleName();
+
 
     public class MovieDetails extends AsyncTask<Void,Void,Movie[]>{
 
@@ -123,14 +120,14 @@ public class MainActivityFragment extends Fragment {
                 //final String MOVIE_BASE_URL = "http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc";
                 //final String APPID_PARAM = "APPID_PARAM";
 
-                URL url = new URL("http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=19ac34309bee9f4bd7f268c4b424ee0a");
+
+                String baseUrl = "http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc";
+                String apiKey = "&api_key=" + BuildConfig.THE_MOVIE_DB_API_KEY;
                 //Uri builtUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
                 //       .appendQueryParameter(APPID_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY)
                 //       .build();
-                //URL url = new URL(builtUri.toString());
+                URL url = new URL(baseUrl.concat(apiKey));
 
-                String movieDbUrl = url.toString();
-                Log.v(LOG_TAG, movieDbUrl);
 
                 // Create the request to TheMovieDB, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
@@ -158,13 +155,13 @@ public class MainActivityFragment extends Fragment {
                     return null;
                 }
                 movieinfoJsonstr = buffer.toString();
-                Log.v(LOG_TAG, movieinfoJsonstr);
+
             } catch (IOException e) {
                 Log.e("PlaceholderFragment", "Error ", e);
                 // If the code didn't successfully get the weather data, there's no point in attemping
                 // to parse it.
                 movieinfoJsonstr = null;
-                Log.v(LOG_TAG, movieinfoJsonstr);
+
             }finally {
                 if (urlConnection != null) {
                     urlConnection.disconnect();
