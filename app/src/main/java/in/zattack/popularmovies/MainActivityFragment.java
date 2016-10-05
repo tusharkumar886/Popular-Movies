@@ -5,9 +5,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
@@ -30,32 +27,10 @@ import java.util.ArrayList;
 public class MainActivityFragment extends Fragment {
 
     MyGridAdapter adapter;
-    public MainActivityFragment() {
-    }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.mainactivityfragment, menu);
-        //super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if(id == R.id.refresh){
-
-            MovieDetails weather = new MovieDetails();
-            weather.execute();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -66,29 +41,35 @@ public class MainActivityFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         GridView gridview = (GridView) rootView.findViewById(R.id.gridView);
         gridview.setAdapter(adapter);
+        MovieDetails weather = new MovieDetails();
+        weather.execute();
         return rootView;
     }
 
-    private Movie[] getmovieDataFromJson(String movieInfo) throws JSONException {
+    private Movie[] getmovieDataFromJson(String movieInfo) throws JSONException, NullPointerException {
 
         final String MDB_RESULT = "results";
         final String MDB_TITLE = "title";
         final String MDB_POSTER = "poster_path";
+        final String baseUrl = "https://image.tmdb.org/t/p/w500";
+        try {
+            JSONObject moviejson = new JSONObject(movieInfo);
+            JSONArray movieArray = moviejson.getJSONArray(MDB_RESULT);
 
-        JSONObject moviejson = new JSONObject(movieInfo);
-        JSONArray movieArray = moviejson.getJSONArray(MDB_RESULT);
+            Movie[] movieDetails = new Movie[16];
 
-        Movie[] movieDetails = new Movie[16];
+            for (int i = 0; i < 16; i++) {
+                JSONObject currentMovie = movieArray.getJSONObject(i);
 
-        for (int i = 0; i < 16; i++) {
-            JSONObject currentMovie = movieArray.getJSONObject(i);
+                String movietitle = currentMovie.getString(MDB_TITLE);
+                String movieImageURL = baseUrl + currentMovie.getString(MDB_POSTER) ;
 
-            String movietitle = currentMovie.getString(MDB_TITLE);
-            String movieImageURL = currentMovie.getString(MDB_POSTER);
-
-            movieDetails[i] = new Movie(movieImageURL, movietitle);
+                movieDetails[i] = new Movie(movieImageURL, movietitle);
+            }
+            return movieDetails;
+        }catch (NullPointerException e){
+            return null;
         }
-        return movieDetails;
     }
 
 
@@ -120,7 +101,6 @@ public class MainActivityFragment extends Fragment {
                 //final String MOVIE_BASE_URL = "http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc";
                 //final String APPID_PARAM = "APPID_PARAM";
 
-
                 String baseUrl = "http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc";
                 String apiKey = "&api_key=" + BuildConfig.THE_MOVIE_DB_API_KEY;
                 //Uri builtUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
@@ -128,38 +108,28 @@ public class MainActivityFragment extends Fragment {
                 //       .build();
                 URL url = new URL(baseUrl.concat(apiKey));
 
-
-                // Create the request to TheMovieDB, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
 
-                // Read the input stream into a String
                 InputStream inputStream = urlConnection.getInputStream();
                 StringBuilder buffer = new StringBuilder();
                 if (inputStream == null) {
-                    // Nothing to do.
                     return null;
                 }
                 reader = new BufferedReader(new InputStreamReader(inputStream));
 
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
                     buffer.append(line).append("\n");
                 }
                 if (buffer.length() == 0) {
-                    // Stream was empty.  No point in parsing.
                     return null;
                 }
                 movieinfoJsonstr = buffer.toString();
 
             } catch (IOException e) {
                 Log.e("PlaceholderFragment", "Error ", e);
-                // If the code didn't successfully get the weather data, there's no point in attemping
-                // to parse it.
                 movieinfoJsonstr = null;
 
             }finally {
