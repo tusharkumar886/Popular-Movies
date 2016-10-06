@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
@@ -27,10 +30,35 @@ import java.util.ArrayList;
 public class MainActivityFragment extends Fragment {
 
     MyGridAdapter adapter;
+    String sort = "popularity";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.mainactivityfragment,menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if(id == R.id.top_rated) {
+            sort = "topRated";
+            MovieDetails movie = new MovieDetails();
+            movie.execute(sort);
+            return true;
+        }
+        else if(id == R.id.popular) {
+            sort = "popular";
+            MovieDetails movie = new MovieDetails();
+            movie.execute(sort);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -41,8 +69,8 @@ public class MainActivityFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         GridView gridview = (GridView) rootView.findViewById(R.id.gridView);
         gridview.setAdapter(adapter);
-        MovieDetails weather = new MovieDetails();
-        weather.execute();
+        MovieDetails movie = new MovieDetails();
+        movie.execute(sort);
         return rootView;
     }
 
@@ -51,14 +79,14 @@ public class MainActivityFragment extends Fragment {
         final String MDB_RESULT = "results";
         final String MDB_TITLE = "title";
         final String MDB_POSTER = "poster_path";
-        final String baseUrl = "https://image.tmdb.org/t/p/w500";
+        final String baseUrl = "https://image.tmdb.org/t/p/w342";
         try {
             JSONObject moviejson = new JSONObject(movieInfo);
             JSONArray movieArray = moviejson.getJSONArray(MDB_RESULT);
 
-            Movie[] movieDetails = new Movie[16];
+            Movie[] movieDetails = new Movie[20];
 
-            for (int i = 0; i < 16; i++) {
+            for (int i = 0; i < 20; i++) {
                 JSONObject currentMovie = movieArray.getJSONObject(i);
 
                 String movietitle = currentMovie.getString(MDB_TITLE);
@@ -74,7 +102,7 @@ public class MainActivityFragment extends Fragment {
 
 
 
-    public class MovieDetails extends AsyncTask<Void,Void,Movie[]>{
+    public class MovieDetails extends AsyncTask<String,Void,Movie[]>{
 
         private final String LOG_TAG = MovieDetails.class.getSimpleName();
 
@@ -90,7 +118,7 @@ public class MainActivityFragment extends Fragment {
 
 
         @Override
-        protected Movie[] doInBackground(Void... params) {
+        protected Movie[] doInBackground(String... params) {
 
 
             HttpURLConnection urlConnection = null;
@@ -102,7 +130,16 @@ public class MainActivityFragment extends Fragment {
                 //final String APPID_PARAM = "APPID_PARAM";
 
                 String baseUrl = "http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc";
+                //String sortBy = "sort_by=" + params[0]+ ".desc";
                 String apiKey = "&api_key=" + BuildConfig.THE_MOVIE_DB_API_KEY;
+
+                if(params[0] == "popular")
+                    baseUrl = "https://api.themoviedb.org/3/movie/popular?language=en-US";
+                else
+                    if(params[0] == "topRated"){
+                        baseUrl = "https://api.themoviedb.org/3/movie/top_rated?language=en-US";
+                    }
+
                 //Uri builtUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
                 //       .appendQueryParameter(APPID_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY)
                 //       .build();

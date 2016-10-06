@@ -2,7 +2,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="in.zattack.popularmovies.MainActivityFragment" >
-    <item android:id="@+id/refresh"
-        android:title="@string/action_refresh"
+
+    <item android:id="@+id/popular"
+        android:title="@string/popular"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/top_rated"
+        android:title="@string/top_rated"/>
 </menu>
