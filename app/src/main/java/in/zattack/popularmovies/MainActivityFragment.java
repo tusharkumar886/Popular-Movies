@@ -147,11 +147,6 @@ public class MainActivityFragment extends Fragment {
             String movieinfoJsonstr = null;
             try {
 
-                //final String MOVIE_BASE_URL = "http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc";
-                //final String APPID_PARAM = "APPID_PARAM";
-
-                //String baseUrl = "http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc";
-                //String sortBy = "sort_by=" + params[0]+ ".desc";
                 String baseUrl = "";
                 String apiKey = "&api_key=" + BuildConfig.THE_MOVIE_DB_API_KEY;
 
@@ -162,9 +157,6 @@ public class MainActivityFragment extends Fragment {
                         baseUrl = "https://api.themoviedb.org/3/movie/top_rated?language=en-US";
                     }
 
-                //Uri builtUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
-                //       .appendQueryParameter(APPID_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY)
-                //       .build();
                 URL url = new URL(baseUrl.concat(apiKey));
 
                 urlConnection = (HttpURLConnection) url.openConnection();
