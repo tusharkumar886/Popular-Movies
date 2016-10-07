@@ -8,5 +8,6 @@
         app:showAsAction="never" />
     <item
         android:id="@+id/top_rated"
-        android:title="@string/top_rated"/>
+        android:title="@string/top_rated"
+        app:showAsAction="never"/>
 </menu>

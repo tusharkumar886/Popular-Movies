@@ -6,11 +6,16 @@ package in.zattack.popularmovies;
 
 public class Movie {
     String movieImage;
-
     String movieName;
+    String releaseDate;
+    String rating;
+    String summary;
 
-    public Movie(String image,String name){
+    public Movie(String image, String name, String date, String vote, String plot) {
         this.movieImage = image;
         this.movieName = name;
+        this.releaseDate = date;
+        this.rating = vote;
+        this.summary = plot;
     }
 }

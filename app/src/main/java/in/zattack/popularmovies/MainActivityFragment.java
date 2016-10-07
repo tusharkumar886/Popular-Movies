@@ -1,5 +1,6 @@
 package in.zattack.popularmovies;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,6 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 
 import org.json.JSONArray;
@@ -30,7 +32,7 @@ import java.util.ArrayList;
 public class MainActivityFragment extends Fragment {
 
     MyGridAdapter adapter;
-    String sort = "popularity";
+    String sort = "popular";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -71,6 +73,19 @@ public class MainActivityFragment extends Fragment {
         gridview.setAdapter(adapter);
         MovieDetails movie = new MovieDetails();
         movie.execute(sort);
+        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Movie forecast = adapter.getItem(position);
+                Intent intent = new Intent(getActivity(), Detail.class)
+                        .putExtra("Title", forecast.movieName)
+                        .putExtra("Poster", forecast.movieImage)
+                        .putExtra("Date", forecast.releaseDate)
+                        .putExtra("Rating", forecast.rating)
+                        .putExtra("Summary", forecast.summary);
+                startActivity(intent);
+            }
+        });
         return rootView;
     }
 
@@ -80,6 +95,9 @@ public class MainActivityFragment extends Fragment {
         final String MDB_TITLE = "title";
         final String MDB_POSTER = "poster_path";
         final String baseUrl = "https://image.tmdb.org/t/p/w342";
+        final String MDB_DATE = "release_date";
+        final String MDB_VOTE = "vote_average";
+        final String MDB_OVERVIEW = "overview";
         try {
             JSONObject moviejson = new JSONObject(movieInfo);
             JSONArray movieArray = moviejson.getJSONArray(MDB_RESULT);
@@ -91,8 +109,11 @@ public class MainActivityFragment extends Fragment {
 
                 String movietitle = currentMovie.getString(MDB_TITLE);
                 String movieImageURL = baseUrl + currentMovie.getString(MDB_POSTER) ;
+                String movieReleaseDate = currentMovie.getString(MDB_DATE);
+                String movieRating = currentMovie.getString(MDB_VOTE);
+                String movieOverView = currentMovie.getString(MDB_OVERVIEW);
 
-                movieDetails[i] = new Movie(movieImageURL, movietitle);
+                movieDetails[i] = new Movie(movieImageURL, movietitle, movieReleaseDate, movieRating, movieOverView);
             }
             return movieDetails;
         }catch (NullPointerException e){
@@ -129,8 +150,9 @@ public class MainActivityFragment extends Fragment {
                 //final String MOVIE_BASE_URL = "http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc";
                 //final String APPID_PARAM = "APPID_PARAM";
 
-                String baseUrl = "http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc";
+                //String baseUrl = "http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc";
                 //String sortBy = "sort_by=" + params[0]+ ".desc";
+                String baseUrl = "";
                 String apiKey = "&api_key=" + BuildConfig.THE_MOVIE_DB_API_KEY;
 
                 if(params[0] == "popular")
