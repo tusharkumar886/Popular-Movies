@@ -1,0 +1,13 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="in.zattack.popularmovies.Main2Activity">
+
+    <item android:id="@+id/popular2"
+        android:title="@string/popular"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/top_rated2"
+        android:title="@string/top_rated"
+        app:showAsAction="never"/>
+</menu>

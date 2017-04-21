@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Popular Movies</string>
+    <string name="app_name">Movies &amp; Tv Shows</string>
     <string name="popular">Most Popular</string>
     <string name="top_rated">Top Rated</string>
     <string name="action_settings">Settings</string>
@@ -7,4 +7,12 @@
     <string name="votes">Rating</string>
     <string name="title_activity_detail">Details</string>
     <string name="by10">/10</string>
+    <string name="upcoming">Upcoming</string>
+    <string name="now_playing">Now Playing</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="title_activity_main">Movies</string>
+    <string name="title_activity_main2">TV Shows</string>
+
 </resources>

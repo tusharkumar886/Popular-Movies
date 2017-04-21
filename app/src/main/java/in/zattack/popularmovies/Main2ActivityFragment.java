@@ -30,7 +30,7 @@ import java.util.ArrayList;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment {
+public class Main2ActivityFragment extends Fragment {
 
 
     MyGridAdapter adapter;
@@ -44,14 +44,14 @@ public class MainActivityFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.mainactivityfragment,menu);
+        inflater.inflate(R.menu.menu_main2,menu);
     }
 
     @Override
 
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if(id == R.id.top_rated) {
+        if(id == R.id.top_rated2) {
             sort = "topRated";
             MovieDetails movie = new MovieDetails();
             movie.execute(sort);
@@ -59,27 +59,11 @@ public class MainActivityFragment extends Fragment {
                     Toast.LENGTH_LONG).show();
             return true;
         }
-        else if(id == R.id.popular) {
+        else if(id == R.id.popular2) {
             sort = "popular";
             MovieDetails movie = new MovieDetails();
             movie.execute(sort);
             Toast.makeText(getActivity(), "Sorted by Popularity",
-                    Toast.LENGTH_LONG).show();
-            return true;
-        }
-        else if(id == R.id.upcoming) {
-            sort = "upcoming";
-            MovieDetails movie = new MovieDetails();
-            movie.execute(sort);
-            Toast.makeText(getActivity(), "Showing Upcoming Movies",
-                    Toast.LENGTH_LONG).show();
-            return true;
-        }
-        else if(id == R.id.now_playing) {
-            sort = "now_playing";
-            MovieDetails movie = new MovieDetails();
-            movie.execute(sort);
-            Toast.makeText(getActivity(), "Showing Now Playing",
                     Toast.LENGTH_LONG).show();
             return true;
         }
@@ -88,11 +72,11 @@ public class MainActivityFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
 
         adapter = new MyGridAdapter(getActivity(), new ArrayList<Movie>());
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        GridView gridview = (GridView) rootView.findViewById(R.id.gridView);
+        View rootView = inflater.inflate(R.layout.fragment_main2, container, false);
+        GridView gridview = (GridView) rootView.findViewById(R.id.gridView2);
         gridview.setAdapter(adapter);
         MovieDetails movie = new MovieDetails();
         movie.execute(sort);
@@ -115,10 +99,10 @@ public class MainActivityFragment extends Fragment {
     private Movie[] getmovieDataFromJson(String movieInfo) throws JSONException, NullPointerException {
 
         final String MDB_RESULT = "results";
-        final String MDB_TITLE = "title";
+        final String MDB_TITLE = "original_name";
         final String MDB_POSTER = "poster_path";
         final String baseUrl = "https://image.tmdb.org/t/p/w342";
-        final String MDB_DATE = "release_date";
+        final String MDB_DATE = "first_air_date";
         final String MDB_VOTE = "vote_average";
         final String MDB_OVERVIEW = "overview";
         try {
@@ -174,19 +158,11 @@ public class MainActivityFragment extends Fragment {
 
                 if(params[0] == "popular")
 
-                    baseUrl = "https://api.themoviedb.org/3/movie/popular?language=en-US";
+                    baseUrl = "https://api.themoviedb.org/3/tv/popular?language=en-US";
                 else
-                    if(params[0] == "topRated"){
-                        baseUrl = "https://api.themoviedb.org/3/movie/top_rated?language=en-US";
-                    }
-                else
-                    if (params[0] == "upcoming"){
-                        baseUrl = "https://api.themoviedb.org/3/movie/upcoming?language=en-US";
-                    }
-                else
-                    if (params[0] == "now_playing"){
-                        baseUrl = "https://api.themoviedb.org/3/movie/now_playing?language=en-US";
-                    }
+                if(params[0] == "topRated"){
+                    baseUrl = "https://api.themoviedb.org/3/tv/top_rated?language=en-US";
+                }
 
                 URL url = new URL(baseUrl.concat(apiKey));
 

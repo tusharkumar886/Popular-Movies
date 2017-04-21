@@ -14,12 +14,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity  implements NavigationView.OnNavigationItemSelectedListener  {
+public class Main2Activity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main2);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -33,9 +33,8 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
         navigationView.setNavigationItemSelectedListener(this);
 
         if(!isOnline()){
-            Snackbar.make(toolbar, "No Internet Connection", Snackbar.LENGTH_LONG).show();
+            Snackbar.make(toolbar," No Internet connection ",Snackbar.LENGTH_LONG).show();
         }
-
     }
 
     public boolean isOnline() {
@@ -60,23 +59,20 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
         if (id == R.id.nav_camera) {
-
-        } else if (id == R.id.nav_gallery) {
-            Intent intent = new Intent(MainActivity.this, Main2Activity.class);
+            Intent intent = new Intent(Main2Activity.this, MainActivity.class);
             startActivity(intent);
+        } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_share) {
-            Intent shareIntent = new Intent();
-            shareIntent.setAction(Intent.ACTION_SEND);
-            shareIntent.putExtra(Intent.EXTRA_TEXT,"Movies & TV Shows");
-            shareIntent.putExtra(Intent.EXTRA_TEXT, "https://github.com/tusharkumar886/Popular-Movies");
-            shareIntent.setType("text/plain");
-            startActivity(shareIntent);
-
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, "Movies & TV Shows");
+            sendIntent.putExtra(Intent.EXTRA_TEXT, "https://github.com/tusharkumar886/Popular-Movies");
+            sendIntent.setType("text/plain");
+            startActivity(sendIntent);
         } else if (id == R.id.nav_about) {
-            Intent intent = new Intent(MainActivity.this,About.class);
+            Intent intent = new Intent(Main2Activity.this,About.class);
             startActivity(intent);
         }
 
@@ -84,25 +80,5 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.mainactivityfragment, menu);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
+
 }
